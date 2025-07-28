@@ -356,12 +356,15 @@ Read Transaction Waveform:
 
 ### Scoreboard Output
 - `APB Burst Test`
+
 <img src="../../docs/images/16.png" alt="alt text" width="70%" />
 
 - `APB Write/Read Test`
+
 <img src="../../docs/images/18.png" alt="alt text" width="70%" />
 
 - `APB Error Address Test`
+
 <img src="../../docs/images/20.png" alt="alt text" width="70%" />
 
 #### Key Observations:
