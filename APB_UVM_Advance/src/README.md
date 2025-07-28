@@ -310,21 +310,27 @@ Read Transaction Waveform:
 3. ACCESS Complete: PREADY=1, PRDATA=0x5f41cbae valid (same data written earlier)
 
 ### Scoreboard Output
+
 `APB Burst Test`
+
 <img src="../../docs/images/16.png" alt="alt text" width="70%" />
 
 - Compares burst write and read data for all addresses.
 - Ensures all burst transactions are correctly verified.
 - Sequence: `sequence_one`.
 
+
 `APB Write/Read Test`
+
 <img src="../../docs/images/18.png" alt="alt text" width="70%" />
 
 - Checks single write and read data match at the same address.
 - Confirms correct data flow for basic operation.
 - Sequence: `write_read_sequence`.
 
+
 `APB Error Address Test`
+
 <img src="../../docs/images/20.png" alt="alt text" width="70%" />
 
 - Shows error detection for invalid address accesses.
