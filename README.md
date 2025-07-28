@@ -127,10 +127,6 @@ PRDATA:   ????????████████????? ← Valid only when PREADY=1
 
 <img src="docs/images/8.png" alt="alt text" width="50%" />
 
-### Example Design:
-
-<img src="docs/images/9.png" alt="alt text" width="100%" />
-
 #### Step-by-Step Flow
 
 1. **Test starts**, and the `Seqs` are created and sent to the `Seqr`.
