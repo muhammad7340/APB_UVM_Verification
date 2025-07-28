@@ -294,6 +294,21 @@ Waveforms of Invalid Address
 - Verifies error signaling via PSLVERR for invalid accesses.
 - Sequence used: `error_addr_sequence`.
 
+### APB Protocol Sequence Analysis:
+#### Burst Write Transaction (First Half):
+Write Transaction Waveform:
+<img src="../../docs/images/14.png">
+1. IDLE → SETUP (T3): PSEL=1, PENABLE=0, Address & Data driven (PADDR=0x0, PWDATA=0x5f41cbae)
+2. SETUP → ACCESS (T4): PENABLE=1 asserted, all signals remain stable
+3. ACCESS Complete: PREADY=1 from slave, transaction completes, return to IDLE
+   
+#### Burst Read Transaction (Second Half):
+Read Transaction Waveform:
+<img src="../../docs/images/15.png">
+1. IDLE → SETUP (TA): PSEL=1, PENABLE=0, PWRITE=0, Address driven (PADDR=0x0)
+2. SETUP → ACCESS (TB): PENABLE=1 asserted, wait for slave response
+3. ACCESS Complete: PREADY=1, PRDATA=0x5f41cbae valid (same data written earlier)
+
 ### Scoreboard Output
 `APB Burst Test`
 <img src="../../docs/images/16.png" alt="alt text" width="70%" />
@@ -338,34 +353,7 @@ write_read_sequence.sv
 error_addr_sequence.sv
 sequencer.sv
 ```
-
-### APB Protocol Sequence Analysis:
-#### Burst Write Transaction (First Half):
-Write Transaction Waveform:
-<img src="../../docs/images/14.png">
-1. IDLE → SETUP (T3): PSEL=1, PENABLE=0, Address & Data driven (PADDR=0x0, PWDATA=0x5f41cbae)
-2. SETUP → ACCESS (T4): PENABLE=1 asserted, all signals remain stable
-3. ACCESS Complete: PREADY=1 from slave, transaction completes, return to IDLE
-   
-#### Burst Read Transaction (Second Half):
-Read Transaction Waveform:
-<img src="../../docs/images/15.png">
-1. IDLE → SETUP (TA): PSEL=1, PENABLE=0, PWRITE=0, Address driven (PADDR=0x0)
-2. SETUP → ACCESS (TB): PENABLE=1 asserted, wait for slave response
-3. ACCESS Complete: PREADY=1, PRDATA=0x5f41cbae valid (same data written earlier)
-
-### Scoreboard Output
-- `APB Burst Test`
-
-<img src="../../docs/images/16.png" alt="alt text" width="70%" />
-
-- `APB Write/Read Test`
-
-<img src="../../docs/images/18.png" alt="alt text" width="70%" />
-
-- `APB Error Address Test`
-
-<img src="../../docs/images/20.png" alt="alt text" width="70%" />
+---
 
 #### Key Observations:
 1. Burst transfers are correctly handled, with all write and read data matching across multiple addresses, confirming robust burst support.
