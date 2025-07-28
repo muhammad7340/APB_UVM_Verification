@@ -267,6 +267,21 @@ vsim +UVM_VERBOSITY=UVM_DEBUG
 <img src="docs/images/12.png" alt="alt text" width="70%" />
 
 ---
+### APB Protocol Sequence Analysis:
+#### Burst Write Transaction (First Half):
+Write Transaction Waveform:
+<img src="docs/images/14.png">
+1. IDLE → SETUP (T3): PSEL=1, PENABLE=0, Address & Data driven (PADDR=0x0, PWDATA=0x5f41cbae)
+2. SETUP → ACCESS (T4): PENABLE=1 asserted, all signals remain stable
+3. ACCESS Complete: PREADY=1 from slave, transaction completes, return to IDLE
+   
+#### Burst Read Transaction (Second Half):
+Read Transaction Waveform:
+<img src="docs/images/15.png">
+1. IDLE → SETUP (TA): PSEL=1, PENABLE=0, PWRITE=0, Address driven (PADDR=0x0)
+2. SETUP → ACCESS (TB): PENABLE=1 asserted, wait for slave response
+3. ACCESS Complete: PREADY=1, PRDATA=0x5f41cbae valid (same data written earlier)
+
 
 ### Simulation Results
 Waveforms for Read/Write Burst size of 8.
@@ -296,6 +311,7 @@ Waveforms of Invalid Address
 - Sequence used: `error_addr_sequence`.
 
 ### Scoreboard Output
+
 `APB Burst Test`
 
 <img src="docs/images/16.png" alt="alt text" width="70%" />
@@ -305,6 +321,7 @@ Waveforms of Invalid Address
 - Sequence: `sequence_one`.
 
 `APB Write/Read Test`
+
 <img src="docs/images/18.png" alt="alt text" width="70%" />
 
 - Checks single write and read data match at the same address.
@@ -312,6 +329,7 @@ Waveforms of Invalid Address
 - Sequence: `write_read_sequence`.
 
 `APB Error Address Test`
+
 <img src="docs/images/20.png" alt="alt text" width="70%" />
 
 - Shows error detection for invalid address accesses.
@@ -319,7 +337,6 @@ Waveforms of Invalid Address
 - Sequence: `error_addr_sequence`.
 
 ---
-
 ### Source Files List
 ```bash
 # All SystemVerilog and script files in src/
@@ -340,31 +357,6 @@ write_read_sequence.sv
 error_addr_sequence.sv
 sequencer.sv
 ```
-
-### APB Protocol Sequence Analysis:
-#### Burst Write Transaction (First Half):
-Write Transaction Waveform:
-<img src="docs/images/14.png">
-1. IDLE → SETUP (T3): PSEL=1, PENABLE=0, Address & Data driven (PADDR=0x0, PWDATA=0x5f41cbae)
-2. SETUP → ACCESS (T4): PENABLE=1 asserted, all signals remain stable
-3. ACCESS Complete: PREADY=1 from slave, transaction completes, return to IDLE
-   
-#### Burst Read Transaction (Second Half):
-Read Transaction Waveform:
-<img src="docs/images/15.png">
-1. IDLE → SETUP (TA): PSEL=1, PENABLE=0, PWRITE=0, Address driven (PADDR=0x0)
-2. SETUP → ACCESS (TB): PENABLE=1 asserted, wait for slave response
-3. ACCESS Complete: PREADY=1, PRDATA=0x5f41cbae valid (same data written earlier)
-
-### Scoreboard Output
-- `APB Burst Test`
-<img src="docs/images/16.png" alt="alt text" width="70%" />
-
-- `APB Write/Read Test`
-<img src="docs/images/18.png" alt="alt text" width="70%" />
-
-- `APB Error Address Test`
-<img src="docs/images/20.png" alt="alt text" width="70%" />
 
 #### Key Observations:
 1. Burst transfers are correctly handled, with all write and read data matching across multiple addresses, confirming robust burst support.
