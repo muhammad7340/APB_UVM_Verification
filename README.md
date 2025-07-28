@@ -11,7 +11,7 @@ In 2013, the AMBA 5 Coherent Hub Interface (`CHI`) specification was introduced,
 
 Simple SoC
 
-<img src="../../docs/images/1.png" alt="alt text" width="70%" />
+<img src="docs/images/1.png" alt="alt text" width="70%" />
 
 
 AHB is used to connect High Bandwidth components and uses a full duplex parallel communication with a pipelined strtcture. 
@@ -48,7 +48,7 @@ The APB interface is designed for `accessing the programmable control registers 
 ---
 
 ### Operations
-<img src="../../docs/images/2.jpg" alt="alt text" width="70%"/>
+<img src="docs/images/2.jpg" alt="alt text" width="70%"/>
 
 - **IDLE** : This is the default state of the APB.
 
@@ -63,8 +63,8 @@ The APB interface is designed for `accessing the programmable control registers 
 
 #### Write Transfer with no wait
 <div style="display: flex;">
-  <img src="../../docs/images/3.jpg" alt="alt text" width="70%" />
-  <img src="../../docs/images/4.png" alt="alt text" width="50%" />
+  <img src="docs/images/3.jpg" alt="alt text" width="70%" />
+  <img src="docs/images/4.png" alt="alt text" width="50%" />
 </div>
 
 ```bash
@@ -81,14 +81,14 @@ PREADY:  ________┌─────┐_____
 ```
 #### Write Transfer with wait state
  <div style="display: flex;">
-  <img src="../../docs/images/5.png" alt="alt text" width="70%" />
-  <img src="../../docs/images/6.png" alt="alt text" width="50%" />
+  <img src="docs/images/5.png" alt="alt text" width="70%" />
+  <img src="docs/images/6.png" alt="alt text" width="50%" />
 </div>
                            
  As seen in figure at during `T1` was the `setup phase` (as during this `PSEL=High`), during `T2` `Access Phase` (`PENBL=HIGH`) but here `PREADY=LOW` which causes delay during T3 & T4, At T5 it becomes high enabling transaction
 
 #### Read Transfer without wait state
-<img src="../../docs/images/7.jpg" alt="alt text" width="50%" />
+<img src="docs/images/7.jpg" alt="alt text" width="50%" />
 
 - During read operation the PENABLE, PSEL, PADDR PWRITE, signals are asserted at the clock edge T1 (SETUP cycle).
 
@@ -125,11 +125,11 @@ PRDATA:   ????????████████????? ← Valid only when PREADY=1
 - An error may or may not change the peripheral's state.
 - Either case is allowed, depending on the peripheral design.
 
-<img src="../../docs/images/8.png" alt="alt text" width="50%" />
+<img src="docs/images/8.png" alt="alt text" width="50%" />
 
 ### Example Design:
 
-<img src="../../docs/images/9.png" alt="alt text" width="100%" />
+<img src="docs/images/9.png" alt="alt text" width="100%" />
 
 #### Step-by-Step Flow
 
@@ -157,7 +157,7 @@ PRDATA:   ????????████████????? ← Valid only when PREADY=1
 
 ---
 ### Project flow
-<img src="../../docs/images/10_mermaraied.png" alt="alt text" width="70%" />
+<img src="docs/images/10_mermaraied.png" alt="alt text" width="70%" />
 
 
 
@@ -264,14 +264,14 @@ vsim +UVM_VERBOSITY=UVM_DEBUG
 ```
 
 ### UVM Hierarchy
-<img src="../../docs/images/12.png" alt="alt text" width="70%" />
+<img src="docs/images/12.png" alt="alt text" width="70%" />
 
 ---
 
 ### Simulation Results
 Waveforms for Read/Write Burst size of 8.
 
-<img src="../../docs/images/11.png">
+<img src="docs/images/11.png">
 
 **Burst Test (sequence_one):**
 - Runs 8 consecutive writes then 8 reads with incrementing addresses.
@@ -279,7 +279,7 @@ Waveforms for Read/Write Burst size of 8.
 - Sequence used: `sequence_one` (default burst sequence).
 
 Waveforms of Simple single read/write 
-<img src="../../docs/images/17.png">
+<img src="docs/images/17.png">
 
 **Write/Read Test (write_read_sequence):**
 - Performs a single write followed by a read to the same address.
@@ -287,7 +287,8 @@ Waveforms of Simple single read/write
 - Sequence used: `write_read_sequence`.
 
 Waveforms of Invalid Address
-<img src="../../docs/images/19.png">
+
+<img src="docs/images/19.png">
 
 **Error Address Test (error_addr_sequence):**
 - Issues transactions to out-of-range addresses (e.g., 100, 200).
@@ -296,21 +297,22 @@ Waveforms of Invalid Address
 
 ### Scoreboard Output
 `APB Burst Test`
-<img src="../../docs/images/16.png" alt="alt text" width="70%" />
+
+<img src="docs/images/16.png" alt="alt text" width="70%" />
 
 - Compares burst write and read data for all addresses.
 - Ensures all burst transactions are correctly verified.
 - Sequence: `sequence_one`.
 
 `APB Write/Read Test`
-<img src="../../docs/images/18.png" alt="alt text" width="70%" />
+<img src="docs/images/18.png" alt="alt text" width="70%" />
 
 - Checks single write and read data match at the same address.
 - Confirms correct data flow for basic operation.
 - Sequence: `write_read_sequence`.
 
 `APB Error Address Test`
-<img src="../../docs/images/20.png" alt="alt text" width="70%" />
+<img src="docs/images/20.png" alt="alt text" width="70%" />
 
 - Shows error detection for invalid address accesses.
 - PSLVERR is asserted as expected for out-of-range addresses.
@@ -342,27 +344,27 @@ sequencer.sv
 ### APB Protocol Sequence Analysis:
 #### Burst Write Transaction (First Half):
 Write Transaction Waveform:
-<img src="../../docs/images/14.png">
+<img src="docs/images/14.png">
 1. IDLE → SETUP (T3): PSEL=1, PENABLE=0, Address & Data driven (PADDR=0x0, PWDATA=0x5f41cbae)
 2. SETUP → ACCESS (T4): PENABLE=1 asserted, all signals remain stable
 3. ACCESS Complete: PREADY=1 from slave, transaction completes, return to IDLE
    
 #### Burst Read Transaction (Second Half):
 Read Transaction Waveform:
-<img src="../../docs/images/15.png">
+<img src="docs/images/15.png">
 1. IDLE → SETUP (TA): PSEL=1, PENABLE=0, PWRITE=0, Address driven (PADDR=0x0)
 2. SETUP → ACCESS (TB): PENABLE=1 asserted, wait for slave response
 3. ACCESS Complete: PREADY=1, PRDATA=0x5f41cbae valid (same data written earlier)
 
 ### Scoreboard Output
 - `APB Burst Test`
-<img src="../../docs/images/16.png" alt="alt text" width="70%" />
+<img src="docs/images/16.png" alt="alt text" width="70%" />
 
 - `APB Write/Read Test`
-<img src="../../docs/images/18.png" alt="alt text" width="70%" />
+<img src="docs/images/18.png" alt="alt text" width="70%" />
 
 - `APB Error Address Test`
-<img src="../../docs/images/20.png" alt="alt text" width="70%" />
+<img src="docs/images/20.png" alt="alt text" width="70%" />
 
 #### Key Observations:
 1. Burst transfers are correctly handled, with all write and read data matching across multiple addresses, confirming robust burst support.
