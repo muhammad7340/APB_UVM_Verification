@@ -306,6 +306,9 @@ Waveforms of Invalid Address
 - Verifies error signaling via PSLVERR for invalid accesses.
 - Sequence used: `error_addr_sequence`.
 
+**Protocol Violation Sequence**
+ - Tests APB protocol violations like PENABLE=1 without PSEL=1
+
 ### Scoreboard Output
 
 `APB Burst Test`
@@ -331,6 +334,14 @@ Waveforms of Invalid Address
 - Shows error detection for invalid address accesses.
 - PSLVERR is asserted as expected for out-of-range addresses.
 - Sequence: `error_addr_sequence`.
+
+`Protocol Violation Test`
+
+<img src="docs/images/22.png" alt="alt text" width="70%" />
+
+- Tests APB protocol violations like PENABLE=1 without PSEL=1.
+- Ensures DUT correctly identifies and handles protocol errors.
+- Sequence: `protocol_violation_sequence`.  
 
 ---
 ### Source Files List
