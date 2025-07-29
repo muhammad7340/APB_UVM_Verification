@@ -50,6 +50,7 @@ class driver extends uvm_driver #(sequence_item);
  // Assignment of Transaction Packet Signals into Pin level Format of Interface 
  //Interface will get data from driver from here
  virtual task drive_task();
+    int timeout_count; // Declare timeout variable at the beginning
 
     if(trans.PWRITE) begin //PWRITE==1: Write
     `uvm_info(get_full_name(), $sformatf("WRITE: %s", trans.convert2string()), UVM_DEBUG)
@@ -66,9 +67,16 @@ class driver extends uvm_driver #(sequence_item);
     vif.PENABLE = trans.PENABLE;
 
     // Wait for PREADY signal from the slave to set it high when ready to accept/provide data
-    while(!vif.PREADY) begin
+    // Add timeout for protocol violations
+    timeout_count = 0;
+    while(!vif.PREADY && timeout_count < 10) begin
         @(posedge vif.PCLK);
-        `uvm_info(get_full_name(), "WRITE: Waiting for ready signal", UVM_DEBUG)
+        timeout_count++;
+        `uvm_info(get_full_name(), $sformatf("WRITE: Waiting for ready signal, timeout_count=%0d", timeout_count), UVM_DEBUG)
+    end
+    
+    if(timeout_count >= 10) begin
+        `uvm_warning(get_full_name(), "WRITE: Protocol violation detected - PREADY timeout")
     end
 
     // Check for PSLVERR signal from slave to determine if the write operation was successful
@@ -98,9 +106,16 @@ class driver extends uvm_driver #(sequence_item);
     vif.PENABLE = trans.PENABLE;
 
     // Wait for PREADY signal from the slave to set it high when ready to accept/provide data
-    while(!vif.PREADY) begin
+    // Add timeout for protocol violations
+    timeout_count = 0;
+    while(!vif.PREADY && timeout_count < 10) begin
         @(posedge vif.PCLK);
-        `uvm_info(get_full_name(), "READ: Waiting for ready signal", UVM_DEBUG)
+        timeout_count++;
+        `uvm_info(get_full_name(), $sformatf("READ: Waiting for ready signal, timeout_count=%0d", timeout_count), UVM_DEBUG)
+    end
+    
+    if(timeout_count >= 10) begin
+        `uvm_warning(get_full_name(), "READ: Protocol violation detected - PREADY timeout")
     end
 
     // Check for PSLVERR signal from slave to determine if the read operation was successful

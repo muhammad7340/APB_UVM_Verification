@@ -273,36 +273,17 @@ Waveforms for Read/Write Burst size of 8.
 
 <img src="../../docs/images/11.png">
 
-**Burst Test (sequence_one):**
-- Runs 8 consecutive writes then 8 reads with incrementing addresses.
-- Verifies burst transfer capability and data integrity.
-- Sequence used: `sequence_one` (default burst sequence).
 
-Waveforms of Simple single read/write 
-<img src="../../docs/images/17.png">
-
-**Write/Read Test (write_read_sequence):**
-- Performs a single write followed by a read to the same address.
-- Checks basic write-read operation and data match.
-- Sequence used: `write_read_sequence`.
-
-Waveforms of Invalid Address
-<img src="../../docs/images/19.png">
-
-**Error Address Test (error_addr_sequence):**
-- Issues transactions to out-of-range addresses (e.g., 100, 200).
-- Verifies error signaling via PSLVERR for invalid accesses.
-- Sequence used: `error_addr_sequence`.
 
 ### APB Protocol Sequence Analysis:
-#### Burst Write Transaction (First Half):
+#### Write Transaction (First Half):
 Write Transaction Waveform:
 <img src="../../docs/images/14.png">
 1. IDLE → SETUP (T3): PSEL=1, PENABLE=0, Address & Data driven (PADDR=0x0, PWDATA=0x5f41cbae)
 2. SETUP → ACCESS (T4): PENABLE=1 asserted, all signals remain stable
 3. ACCESS Complete: PREADY=1 from slave, transaction completes, return to IDLE
    
-#### Burst Read Transaction (Second Half):
+#### Read Transaction (Second Half):
 Read Transaction Waveform:
 <img src="../../docs/images/15.png">
 1. IDLE → SETUP (TA): PSEL=1, PENABLE=0, PWRITE=0, Address driven (PADDR=0x0)
@@ -310,102 +291,25 @@ Read Transaction Waveform:
 3. ACCESS Complete: PREADY=1, PRDATA=0x5f41cbae valid (same data written earlier)
 
 ### Scoreboard Output
-
-`APB Burst Test`
-
 <img src="../../docs/images/16.png" alt="alt text" width="70%" />
 
-- Compares burst write and read data for all addresses.
-- Ensures all burst transactions are correctly verified.
-- Sequence: `sequence_one`.
-
-
-`APB Write/Read Test`
-
-<img src="../../docs/images/18.png" alt="alt text" width="70%" />
-
-- Checks single write and read data match at the same address.
-- Confirms correct data flow for basic operation.
-- Sequence: `write_read_sequence`.
-
-
-`APB Error Address Test`
-
-<img src="../../docs/images/20.png" alt="alt text" width="70%" />
-
-- Shows error detection for invalid address accesses.
-- PSLVERR is asserted as expected for out-of-range addresses.
-- Sequence: `error_addr_sequence`.
-
----
-
-### Source Files List
-```bash
-# All SystemVerilog and script files in src/
-agent.sv
-scoreboard.sv
-driver.sv
-design.sv
-environment.sv
-interface.sv
-monitor.sv
-pkg.sv
-run.do
-sequence.sv
-sequence_item.sv
-test.sv
-top.sv
-write_read_sequence.sv
-error_addr_sequence.sv
-sequencer.sv
-```
----
-
 #### Key Observations:
-1. Burst transfers are correctly handled, with all write and read data matching across multiple addresses, confirming robust burst support.
-2. Single write/read operations show perfect data integrity, validating basic APB functionality and correct address/data handling.
-3. Error address tests successfully trigger PSLVERR for out-of-range addresses, demonstrating proper error detection and protocol compliance.
-4. PREADY signal behavior is consistent, ensuring transactions only complete when the slave is ready, as per APB specification.
-5. Scoreboard comparisons pass for all valid cases, confirming the correctness of both the DUT and the verification environment.
-6. Waveforms clearly illustrate the expected APB transaction phases (IDLE, SETUP, ACCESS) for all test scenarios.
-7. Testbench flexibility allows easy switching between burst, single, and error tests, supporting comprehensive protocol coverage and future extensions.
+1. 2-cycle minimum: Each transaction takes exactly 2 cycles (SETUP + ACCESS)
+2. Write-then-Read: Perfect APB sequence showing data integrity
+3. PREADY control: Slave controls transaction completion timing
+4. Data match: Read data matches previously written data (verification success!)
+5. This waveform shows a perfect APB write followed by read from the same address - classic verification pattern!
+
+
+
+
+
+
+
 ---
 ### References
 - Design:
   https://github.com/kumarraj5364/AMBA-APB-PROTOCOL?tab=readme-ov-file
 - Design & Verification: https://github.com/PRADEEPCHANGAL/APB-Protocol-Verification-using-UVM
   
----
-
-### How to Run the Simulation
-
-1. **Open a terminal and navigate to the project directory:**
-   - First, go to the `APB_UVM_Advance` folder, then into `src`:
-
-```bash
-cd APB_UVM_Advance
-cd src
-```
-
-2. **Run the simulation in command-line mode (text results only):**
-
-```bash
-vsim -c -do run.do
-```
-
-3. **Run the simulation with GUI for waveforms (QuestaSim):**
-
-```bash
-vsim -do run.do
-```
-
-4. **To run a different test case:**
-   - Open `run.do` in a text editor.
-   - Uncomment the line for the desired test (e.g., `write_read_test` or `error_addr_test`) and comment out the default line if needed.
-   - Only one `vsim ... +UVM_TESTNAME=...` line should be active at a time.
-
-5. **View waveforms:**
-   - If you used the GUI command, waveforms will be displayed automatically.
-   - You can inspect signal activity and verify protocol behavior visually.
-
 ---

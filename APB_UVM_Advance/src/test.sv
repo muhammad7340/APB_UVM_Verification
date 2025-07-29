@@ -226,3 +226,82 @@ class error_addr_test extends uvm_test;
     endfunction
     
 endclass: error_addr_test
+
+// Protocol Violation test - uses protocol_violation_sequence
+class protocol_violation_test extends uvm_test;
+    `uvm_component_utils(protocol_violation_test)
+    
+    // Components that the test contains
+    environment env;                    // Environment instance
+    protocol_violation_sequence seq;    // Sequence instance
+    
+    // Virtual Interface
+    virtual intf vif;
+
+    // Constructor
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+        `uvm_info(get_type_name(), $sformatf("PROTOCOL_VIOLATION_TEST created: %s at time %0t", name, $time), UVM_LOW)
+    endfunction
+    
+    // Build Phase - Create environment
+    function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        
+        // Get virtual interface from config_db
+        if (!uvm_config_db#(virtual intf)::get(this, "", "vif", vif)) begin
+            `uvm_fatal("NO_VIF", $sformatf("Virtual interface must be set for: %s.vif", get_full_name()))
+        end
+        
+        // Create environment
+        env = environment::type_id::create("env", this);
+        `uvm_info(get_full_name(), "Build phase completed", UVM_LOW)
+    endfunction
+    
+    // Connect Phase - Set virtual interface for environment
+    function void connect_phase(uvm_phase phase);
+        super.connect_phase(phase);
+        
+        // Set virtual interface for environment
+        uvm_config_db#(virtual intf)::set(this, "env", "vif", vif);
+        `uvm_info(get_full_name(), "Connect phase completed", UVM_LOW)
+    endfunction
+    
+    // Run Phase - Start the test sequence
+    virtual task run_phase(uvm_phase phase);
+        super.run_phase(phase);
+        
+        // Raise objection to keep test running
+        phase.raise_objection(this, "Starting APB protocol violation test sequence");
+        `uvm_info(get_full_name(), "Starting APB Protocol Violation Test", UVM_LOW)
+        
+        // Create and start sequence
+        seq = protocol_violation_sequence::type_id::create("seq");
+        seq.start(env.agt.seqr);
+        
+        // Add some delay for final transactions to complete
+        #1;
+        `uvm_info(get_full_name(), "APB Protocol Violation Test Completed", UVM_LOW)
+        // Drop objection to end test
+        phase.drop_objection(this, "APB protocol violation test sequence completed");
+    endtask
+    
+    // End of elaboration phase - print test hierarchy
+    function void end_of_elaboration_phase(uvm_phase phase);
+        super.end_of_elaboration_phase(phase);
+        `uvm_info(get_full_name(), "Test hierarchy created:", UVM_LOW)
+        uvm_top.print_topology();
+    endfunction
+    
+    // Report phase - print final test results
+    function void report_phase(uvm_phase phase);
+        super.report_phase(phase);
+        `uvm_info(get_type_name(), "|===============================================================|", UVM_NONE)
+        `uvm_info(get_type_name(), "|            APB PROTOCOL VIOLATION TEST COMPLETED              |",  UVM_NONE)
+        `uvm_info(get_type_name(), "|===============================================================|", UVM_NONE)
+    endfunction
+    
+endclass: protocol_violation_test
+
+
+

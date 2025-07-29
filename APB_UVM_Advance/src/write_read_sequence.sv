@@ -1,3 +1,5 @@
+//Single Write and Read Transaction //Same address access pattern
+
 class write_read_sequence extends uvm_sequence#(sequence_item);
   `uvm_object_utils(write_read_sequence)
   

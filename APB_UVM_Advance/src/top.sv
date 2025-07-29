@@ -33,7 +33,8 @@ module top();
         .PADDR(intf.PADDR),
         .PWDATA(intf.PWDATA),
         .PRDATA(intf.PRDATA),
-        .PREADY(intf.PREADY)
+        .PREADY(intf.PREADY),
+        .PSLVERR(intf.PSLVERR)
     );
 
     initial begin

@@ -6,9 +6,11 @@ vlog interface.sv design.sv pkg.sv top.sv
 # Alternative test options (uncomment to use):
 # Write-Read test (single write then read to same address)
 #vsim work.top +UVM_TESTNAME=write_read_test +UVM_VERBOSITY=UVM_LOW
-
 # Error Address test (invalid address testing)
- vsim work.top +UVM_TESTNAME=error_addr_test +UVM_VERBOSITY=UVM_LOW
+#vsim work.top +UVM_TESTNAME=error_addr_test +UVM_VERBOSITY=UVM_LOW
+
+# Protocol Violation test (intentional protocol violations)
+vsim work.top +UVM_TESTNAME=protocol_violation_test +UVM_VERBOSITY=UVM_LOW
 
 add wave -position insertpoint  \
 sim:/top/intf/PADDR \

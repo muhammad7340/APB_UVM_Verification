@@ -1,4 +1,4 @@
-module AMBA_APB(PSEL, PENABLE, PADDR, PWRITE, PRESET, PWDATA, PCLK, PREADY, PRDATA);
+module AMBA_APB(PSEL, PENABLE, PADDR, PWRITE, PRESET, PWDATA, PCLK, PREADY, PRDATA, PSLVERR);
 
     input  bit         PSEL;//select
     input  bit         PENABLE;//enable
@@ -11,16 +11,18 @@ module AMBA_APB(PSEL, PENABLE, PADDR, PWRITE, PRESET, PWDATA, PCLK, PREADY, PRDA
 
     output reg  [31:0] PRDATA;//read data
     output reg         PREADY;//ready signal
-    // output reg         PSLVERR;
+    output reg         PSLVERR;//slave error signal
 
     // State encoding
     parameter IDLE   = 2'b00;
     parameter SETUP  = 2'b01;
     parameter ACCESS = 2'b10;
 
-
     reg [1:0]  ps, ns;//ps: present state, ns: next state
     reg [31:0] mem [31:0];//memory array
+    
+    // Address range check
+    wire address_valid = (PADDR >= 0) && (PADDR <= 31);
 
     always @(posedge PCLK) begin
         if (PRESET)
@@ -42,10 +44,21 @@ module AMBA_APB(PSEL, PENABLE, PADDR, PWRITE, PRESET, PWDATA, PCLK, PREADY, PRDA
                     ns = ACCESS;
                     PREADY = 1;
                     if (PWRITE) begin
-                        mem[PADDR] = PWDATA;
+                        if (address_valid) begin
+                            mem[PADDR] = PWDATA;
+                            PSLVERR = 0; // No error for valid address
+                        end else begin
+                            PSLVERR = 1; // Error for invalid address
+                        end
                     end
                     else begin
-                        PRDATA = mem[PADDR];
+                        if (address_valid) begin
+                            PRDATA = mem[PADDR];
+                            PSLVERR = 0; // No error for valid address
+                        end else begin
+                            PRDATA = 32'hDEADBEEF; // Error data for invalid address
+                            PSLVERR = 1; // Error for invalid address
+                        end
                     end
                     //ns = SETUP;
                 end

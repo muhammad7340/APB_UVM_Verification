@@ -29,16 +29,16 @@ The APB interface is designed for `accessing the programmable control registers 
 
 | Signal         | Direction           | Description                                                                 |
 |----------------|---------------------|-----------------------------------------------------------------------------|
-| **PCLK**       | -                   | System clock; may be directly connected.                                   |
-| **PRESETn**    | -                   | Active Low Asynchronous Reset.                                             |
-| **PADDR[31:0]**| Master → Slave      | Address bus (up to 32 bits wide).                                          |
-| **PWDATA[31:0]**| Master → Slave     | Write data bus (up to 32 bits wide).                                       |
-| **PRDATA[31:0]**| Slave → Master     | Read data bus (up to 32 bits wide).                                        |
-| **PSELx**      | Master → Slave      | Slave Select; one PSEL signal per slave (e.g., PSEL1, PSEL2,..., PSELn).   |
-| **PENABLE**    | Master → Slave      | Indicates the second and subsequent cycles (ACCESS phase).                 |
-| **PWRITE**     | Master → Slave      | High = Write operation, Low = Read operation.                              |
-| **PREADY**     | Slave → Master      | Slave response signal; High = Ready, Low = Wait (wait states).             |
-| **PSLVERR**    | Slave → Master      | Transfer status; High = Error, Low = Success.                              |
+| **PCLK**       | -                   | System clock; may be directly connected.                                    |
+| **PRESETn**    | -                   | Active Low Asynchronous Reset.                                              |
+| **PADDR[31:0]**| Master → Slave      | Address bus (up to 32 bits wide).                                           |
+| **PWDATA[31:0]**| Master → Slave     | Write data bus (up to 32 bits wide).                                        |
+| **PRDATA[31:0]**| Slave → Master     | Read data bus (up to 32 bits wide).                                         |
+| **PSELx**      | Master → Slave      | Slave Select; one PSEL signal per slave (e.g., PSEL1, PSEL2,..., PSELn).    |
+| **PENABLE**    | Master → Slave      | Indicates the second and subsequent cycles (ACCESS phase).                  |
+| **PWRITE**     | Master → Slave      | High = Write operation, Low = Read operation.                               |
+| **PREADY**     | Slave → Master      | Slave response signal; High = Ready, Low = Wait (wait states).              |
+| **PSLVERR**    | Slave → Master      | Transfer status; High = Error, Low = Success.                               |
 
 ---
 

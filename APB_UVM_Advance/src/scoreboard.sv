@@ -98,14 +98,50 @@ class scoreboard extends uvm_scoreboard;
             read_transactions.size(), trans.PADDR, trans.PRDATA, $time), UVM_LOW)
     endfunction
 
+    //** Test Type Detection Function
+    virtual function bit is_error_test();
+        // Check if this is an error test by looking at transaction patterns
+        // Error tests typically have invalid addresses or protocol violations
+        if(write_transactions.size() > 0) begin
+            // Check if any write transaction has invalid address (> 31)
+            if(write_transactions[write_transactions.size()-1].addr > 31) begin
+                return 1; // This is an error test
+            end
+        end
+        if(read_transactions.size() > 0) begin
+            // Check if any read transaction has invalid address (> 31)
+            if(read_transactions[read_transactions.size()-1].addr > 31) begin
+                return 1; // This is an error test
+            end
+        end
+        return 0; // Normal test
+    endfunction
+
     task run_phase(uvm_phase phase);
         forever begin
             @(posedge vif.PCLK) begin
                 #1;
                 // Handle error cases first 
                 if(WPSLVERR || RPSLVERR) begin
-                    if(WPSLVERR) void'(write_q.pop_front());// Remove errored write
-                    if(RPSLVERR) void'(read_q.pop_front());// Remove errored read
+                    if(is_error_test()) begin
+                        // For error tests: Report the error but still do comparison
+                        if(WPSLVERR) begin
+                            `uvm_warning(get_full_name(), "WRITE ERROR: PSLVERR detected for invalid address")
+                        end
+                        if(RPSLVERR) begin
+                            `uvm_warning(get_full_name(), "READ ERROR: PSLVERR detected for invalid address")
+                        end
+                        // Still do comparison for error tests
+                        if(write_q.size() >0 && read_q.size() >0) begin 
+                            read_data  = read_q.pop_front();
+                            write_data = write_q.pop_front();
+                            compare();
+                        end
+                    end else begin
+                        // For normal tests: Remove errored transactions (existing behavior)
+                        if(WPSLVERR) void'(write_q.pop_front());
+                        if(RPSLVERR) void'(read_q.pop_front());
+                    end
                     // Reset error flags
                     WPSLVERR = 0;
                     RPSLVERR = 0;
@@ -125,12 +161,12 @@ class scoreboard extends uvm_scoreboard;
     //** Enhanced Comparison Function with Transaction Tracking
     virtual function void compare();
         if(write_data == read_data) begin
-            `uvm_info(get_full_name(), $sformatf("COMPARE[%0d]: ✅ PASS - W=0x%0h, R=0x%0h", 
+            `uvm_info(get_full_name(), $sformatf("COMPARE[%0d]:  PASS - W=0x%0h, R=0x%0h", 
                 transaction_id, write_data, read_data), UVM_LOW)
             compare_pass++;
         end
         else begin
-            `uvm_error(get_full_name(), $sformatf("COMPARE[%0d]: ❌ FAIL - W=0x%0h, R=0x%0h", 
+            `uvm_error(get_full_name(), $sformatf("COMPARE[%0d]:  FAIL - W=0x%0h, R=0x%0h", 
                 transaction_id, write_data, read_data))
             compare_fail++;
         end

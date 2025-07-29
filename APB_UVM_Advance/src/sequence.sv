@@ -3,8 +3,8 @@
 class sequence_one extends uvm_sequence#(sequence_item); //type parameter passed `packet/transaction`
   `uvm_object_utils(sequence_one)//object instead of component
   
-  int WRITE_BURST_LENGTH = 8;//number of write transactions
-  int READ_BURST_LENGTH  = 8;//number of read transactions
+  int WRITE_BURST_LENGTH = 32;//number of write transactions
+  int READ_BURST_LENGTH  = 32;//number of read transactions
 
   //Constructor
   function new(string name="sequence_one");//no parent

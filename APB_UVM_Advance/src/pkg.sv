@@ -7,6 +7,7 @@ package pkg;
   `include "sequence.sv"
   `include "write_read_sequence.sv"
   `include "error_addr_sequence.sv"
+  `include "protocol_violation_sequence.sv"
   `include "sequencer.sv"
   `include "driver.sv"
   `include "monitor.sv"
