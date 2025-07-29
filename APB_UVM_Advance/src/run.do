@@ -1,7 +1,7 @@
 vlib work
 vlog interface.sv design.sv pkg.sv top.sv
 # Default test - Burst sequence (sequence_one)
-#vsim work.top +UVM_TESTNAME=test +UVM_VERBOSITY=UVM_LOW
+vsim work.top +UVM_TESTNAME=test +UVM_VERBOSITY=UVM_LOW
 
 # Alternative test options (uncomment to use):
 # Write-Read test (single write then read to same address)
@@ -10,6 +10,7 @@ vlog interface.sv design.sv pkg.sv top.sv
 #vsim work.top +UVM_TESTNAME=error_addr_test +UVM_VERBOSITY=UVM_LOW
 
 # Protocol Violation test (intentional protocol violations)
+
 vsim work.top +UVM_TESTNAME=protocol_violation_test +UVM_VERBOSITY=UVM_LOW
 
 add wave -position insertpoint  \

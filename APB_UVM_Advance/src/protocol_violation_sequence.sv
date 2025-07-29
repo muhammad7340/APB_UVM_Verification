@@ -11,19 +11,17 @@ class protocol_violation_sequence extends uvm_sequence#(sequence_item);
   
   virtual task body();
     sequence_item trans;
-    
-    // ========================================
+
     // VIOLATION 1: PENABLE=1 without PSEL=1
-    // ========================================
     // APB Rule: PENABLE should only be asserted when PSEL=1
     // This violation tests if the DUT properly handles this protocol error
     `uvm_info(get_full_name(), "=== TESTING VIOLATION 1: PENABLE=1 without PSEL=1 ===", UVM_LOW)
     
     trans = sequence_item::type_id::create("penable_without_psel");
-    trans.PSEL = 0;        // PSEL is LOW (should not be selected)
-    trans.PENABLE = 1;     // PENABLE is HIGH (violation!)
-    trans.PWRITE = 1;      // Write operation
-    trans.PADDR = 32'h5;   // Some address
+    trans.PSEL = 0;              // PSEL is LOW (should not be selected)
+    trans.PENABLE = 1;           // PENABLE is HIGH (violation!)
+    trans.PWRITE = 1;            // Write operation
+    trans.PADDR = 32'h5;         // Some address
     trans.PWDATA = 32'hA5A5A5A5; // Some data
     
     start_item(trans);
